@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1051809918444",
+    "firebase_url": "https://wind-cc4f9.firebaseio.com",
+    "project_id": "wind-cc4f9",
+    "storage_bucket": "wind-cc4f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1051809918444:android:f6553bd17a711e30",
+        "android_client_info": {
+          "package_name": "com.example.divakrishna.wind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1051809918444-r6qunts94curmo501jb1ch2vp5rkd4b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.divakrishna.wind",
+            "certificate_hash": "c5f3c68ba1863084871834d1124a112069c6b041"
+          }
+        },
+        {
+          "client_id": "1051809918444-apu00ifc19cdj3uj8q36n83pki6kg9q3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApZx_uzCkUHGng2PdECtYiRPCTsPi5yh0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1051809918444-apu00ifc19cdj3uj8q36n83pki6kg9q3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
