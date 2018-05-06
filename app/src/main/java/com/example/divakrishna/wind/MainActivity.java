@@ -12,19 +12,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mPostList;
 
     private DatabaseReference mDatabase;
+
+    private DatabaseReference mDatabaseUsers;
+
     private Query postQuery;
 
     private FirebaseAuth mAuth;
@@ -51,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Post");
         mDatabase.keepSynced(true);
+
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.keepSynced(true);
+
         postQuery = mDatabase.orderByKey();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -85,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        checkUserExist();
+
         mAuth.addAuthStateListener(mAuthListener);
         firebaseRecyclerAdapter.startListening();
     }
@@ -96,6 +109,26 @@ public class MainActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
         firebaseRecyclerAdapter.stopListening();
+    }
+
+    private void checkUserExist() {
+        final String user_id = mAuth.getCurrentUser().getUid();
+
+        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(user_id)){
+                    Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+                    setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(setupIntent);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder{
