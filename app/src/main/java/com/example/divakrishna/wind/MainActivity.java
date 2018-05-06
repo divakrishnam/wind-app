@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         mPostList.setHasFixedSize(true);
         mPostList.setLayoutManager(layoutManager);
 
+        checkUserExist();
+
         FirebaseRecyclerOptions postOptions = new FirebaseRecyclerOptions.Builder<Post>().setQuery(postQuery, Post.class).build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(postOptions) {
 
@@ -95,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        checkUserExist();
 
         mAuth.addAuthStateListener(mAuthListener);
         firebaseRecyclerAdapter.startListening();

@@ -1,5 +1,6 @@
 package com.example.divakrishna.wind;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,8 @@ public class SetupActivity extends AppCompatActivity {
 
     private StorageReference mStorageImage;
 
+    private ProgressDialog mProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,8 @@ public class SetupActivity extends AppCompatActivity {
         mStorageImage = FirebaseStorage.getInstance().getReference().child("Profile_images");
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mProgress = new ProgressDialog(this);
 
         mSetupImageButton = (ImageButton)findViewById(R.id.setupImageButton);
         mNameField = (EditText)findViewById(R.id.setupNameField);
@@ -77,6 +82,9 @@ public class SetupActivity extends AppCompatActivity {
 
         if(!TextUtils.isEmpty(name) && mImageUri != null){
 
+            mProgress.setMessage("Finishing Setup ...");
+            mProgress.show();
+
             StorageReference filepath = mStorageImage.child(mImageUri.getLastPathSegment());
 
             filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -86,6 +94,12 @@ public class SetupActivity extends AppCompatActivity {
 
                     mDatabaseUsers.child(user_id).child("name").setValue(name);
                     mDatabaseUsers.child(user_id).child("image").setValue(downloadUri);
+
+                    mProgress.dismiss();
+
+                    Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(mainIntent);
                 }
             });
         }
