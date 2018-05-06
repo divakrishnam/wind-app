@@ -2,40 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".LoginActivity">
 
     <EditText
-        android:id="@+id/nameField"
+        android:id="@+id/loginEmailField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:hint="Nama"/>
-
-    <EditText
-        android:id="@+id/emailField"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/nameField"
         android:inputType="textEmailAddress"
         android:hint="Email"/>
+
     <EditText
-        android:id="@+id/passwordField"
+        android:id="@+id/loginPasswordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/emailField"
+        android:layout_below="@id/loginEmailField"
         android:inputType="textPassword"
         android:hint="Password"/>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginPasswordField"
+        android:text="Login"/>
 
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/passwordField"
+        android:layout_below="@id/loginButton"
         android:text="Registration"/>
 
 </RelativeLayout>
