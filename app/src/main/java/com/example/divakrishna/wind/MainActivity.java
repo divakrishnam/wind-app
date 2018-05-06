@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -26,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private Query postQuery;
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     private FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter;
 
     @Override
@@ -33,12 +37,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() == null){
+                    Intent loginIntent = new Intent(MainActivity.this, RegisterActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                }
+            }
+        };
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Post");
+        mDatabase.keepSynced(true);
         postQuery = mDatabase.orderByKey();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
 
         mPostList = (RecyclerView)findViewById(R.id.post_list);
         mPostList.setHasFixedSize(true);
-        mPostList.setLayoutManager(new LinearLayoutManager(this));
+        mPostList.setLayoutManager(layoutManager);
 
         FirebaseRecyclerOptions postOptions = new FirebaseRecyclerOptions.Builder<Post>().setQuery(postQuery, Post.class).build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(postOptions) {
@@ -63,12 +84,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        mAuth.addAuthStateListener(mAuthListener);
         firebaseRecyclerAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
         firebaseRecyclerAdapter.stopListening();
     }
 
@@ -98,7 +124,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_add){
             startActivity(new Intent(MainActivity.this, PostActivity.class));
+            finish();
+        }
+
+        if(item.getItemId() == R.id.action_logout){
+            logout();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        mAuth.signOut();
     }
 }

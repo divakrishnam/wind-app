@@ -64,6 +64,7 @@ public class PostActivity extends AppCompatActivity {
             mProgress.dismiss();
 
             startActivity(new Intent(PostActivity.this, MainActivity.class));
+            finish();
         }
     }
 }
