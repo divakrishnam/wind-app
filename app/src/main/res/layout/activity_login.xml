@@ -30,11 +30,19 @@
         android:layout_below="@id/loginPasswordField"
         android:text="Login"/>
 
+    <com.google.android.gms.common.SignInButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/googleBtn"
+        android:layout_below="@id/loginButton">
+
+    </com.google.android.gms.common.SignInButton>
+
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loginButton"
+        android:layout_below="@id/googleBtn"
         android:text="Registration"/>
 
 </RelativeLayout>
