@@ -1,16 +1,19 @@
 package com.example.divakrishna.wind;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,8 +92,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Post model) {
-                holder.setDesc(model.getDesc());
+            protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position, @NonNull Post model) {
+                viewHolder.setDesc(model.getDesc());
+                viewHolder.setUsername(model.getUsername());
+                viewHolder.setUserimage(model.getUserimage());
             }
         };
 
@@ -139,6 +147,16 @@ public class MainActivity extends AppCompatActivity {
             super(itemView);
 
             mView = itemView;
+        }
+
+        public void setUserimage(final String userimage) {
+            ImageView post_userimage = (ImageView) mView.findViewById(R.id.post_userimage);
+            Picasso.get().load(userimage).into(post_userimage);
+        }
+
+        public void setUsername(String username){
+            TextView post_username = (TextView) mView.findViewById(R.id.post_username);
+            post_username.setText(username);
         }
 
         public void setDesc(String desc){
