@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,10 +45,17 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabaseUsers;
 
+    private DatabaseReference mDatabaseLike;
+
+    private DatabaseReference mDatabaseDislike;
+
     private Query postQuery;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private boolean mProcessLike = false;
+    private boolean mProcessDislike = false;
 
     private FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter;
 
@@ -74,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseUsers.keepSynced(true);
 
+        mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+        mDatabaseLike.keepSynced(true);
+
+        mDatabaseDislike = FirebaseDatabase.getInstance().getReference().child("Dislikes");
+        mDatabaseDislike.keepSynced(true);
+
         postQuery = mDatabase.orderByKey();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -99,14 +113,60 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position, @NonNull Post model) {
+
+                final String post_key = getRef(position).getKey();
+
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setUserimage(model.getUserimage());
 
+                viewHolder.setLikeButton(post_key);
+
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MainActivity.this, "You clicked a View", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, post_key, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                viewHolder.mLikeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mProcessLike = true;
+                        mProcessDislike = false;
+                            mDatabaseLike.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    if(mProcessLike){
+                                        if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+                                            mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+
+                                            mProcessLike = false;
+                                        }else{
+                                            mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
+
+                                            mProcessLike = false;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                    }
+                });
+
+                viewHolder.mDislikeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mProcessLike = false;
+                        mProcessDislike = true;
+                        if(mProcessDislike){
+
+                        }
                     }
                 });
             }
@@ -158,10 +218,42 @@ public class MainActivity extends AppCompatActivity {
 
         View mView;
 
+        ImageButton mLikeButton;
+        ImageButton mDislikeButton;
+
+        DatabaseReference mDatabaseLike;
+        FirebaseAuth mAuth;
+
         public PostViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
+
+            mLikeButton = (ImageButton)mView.findViewById(R.id.like_button);
+            mDislikeButton = (ImageButton)mView.findViewById(R.id.dislike_button);
+
+            mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+            mAuth = FirebaseAuth.getInstance();
+
+            mDatabaseLike.keepSynced(true);
+        }
+
+        public void setLikeButton(final String post_key){
+            mDatabaseLike.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up_clicked);
+                    } else{
+                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         public void setUserimage(final String userimage) {
