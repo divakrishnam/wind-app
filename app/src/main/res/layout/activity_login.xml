@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".LoginActivity">
 
     <EditText
@@ -21,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/loginEmailField"
         android:inputType="textPassword"
-        android:hint="Password"/>
+        android:hint="Password" />
 
     <Button
         android:id="@+id/loginButton"

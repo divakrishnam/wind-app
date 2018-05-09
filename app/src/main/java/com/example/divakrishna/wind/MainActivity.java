@@ -2,12 +2,18 @@ package com.example.divakrishna.wind;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,6 +102,13 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setUserimage(model.getUserimage());
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(MainActivity.this, "You clicked a View", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         };
 
@@ -120,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkUserExist() {
+        if(mAuth.getCurrentUser() != null) {
         final String user_id = mAuth.getCurrentUser().getUid();
 
         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
@@ -138,8 +152,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    }
 
-    public static class PostViewHolder extends RecyclerView.ViewHolder{
+    public class PostViewHolder extends RecyclerView.ViewHolder{
 
         View mView;
 
@@ -151,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void setUserimage(final String userimage) {
             ImageView post_userimage = (ImageView) mView.findViewById(R.id.post_userimage);
-            Picasso.get().load(userimage).into(post_userimage);
+            Picasso.get().load(userimage).transform(new RoundTransformation(200,1)).into(post_userimage);
         }
 
         public void setUsername(String username){

@@ -3,6 +3,7 @@ package com.example.divakrishna.wind;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -30,10 +31,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     private ProgressDialog mProgress;
 
+    private ActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        actionBar = getSupportActionBar();
+        actionBar.hide();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -77,9 +83,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                         mProgress.dismiss();
 
-                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent);
+                        Intent setupIntent = new Intent(RegisterActivity.this, SetupActivity.class);
+                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(setupIntent);
                     }
                 }
             });

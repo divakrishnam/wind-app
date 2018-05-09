@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +28,7 @@ public class PostActivity extends AppCompatActivity {
 
     private EditText mPostDesc;
 
-    private Button mSubmitButton;
+    //private Button mSubmitButton;
 
     //private StorageReference mStorage;
     private DatabaseReference mDatabase;
@@ -54,16 +56,16 @@ public class PostActivity extends AppCompatActivity {
 
         mPostDesc = (EditText)findViewById(R.id.descField);
 
-        mSubmitButton = (Button)findViewById(R.id.submitButton);
+        //mSubmitButton = (Button)findViewById(R.id.submitButton);
 
         mProgress = new ProgressDialog(this);
         
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startPost();
-            }
-        });
+//        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startPost();
+//            }
+//        });
     }
 
     private void startPost() {
@@ -112,5 +114,19 @@ public class PostActivity extends AppCompatActivity {
             startActivity(new Intent(PostActivity.this, MainActivity.class));
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.post_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_addpost){
+            startPost();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

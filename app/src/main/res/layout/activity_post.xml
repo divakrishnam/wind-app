@@ -14,16 +14,11 @@
         android:hint="Description"
         android:padding="15dp"
         android:inputType="textMultiLine"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:editable="true"
+        android:enabled="true"
+        android:focusable="true"/>
 
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="Post"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorPrimary"/>
+
 
 </RelativeLayout>

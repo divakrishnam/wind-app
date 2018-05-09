@@ -3,6 +3,7 @@ package com.example.divakrishna.wind;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -39,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mLoginPasswordField;
     private Button mLoginButton;
 
+    private Button mRegisterButton;
+
     private FirebaseAuth mAuth;
     private ProgressDialog mProgress;
 
@@ -52,10 +55,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleApiClient mGoogleApiClient;
 
+    private ActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        actionBar = getSupportActionBar();
+        actionBar.hide();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -71,10 +79,19 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton = (Button) findViewById(R.id.loginButton);
 
+        mRegisterButton = (Button) findViewById(R.id.registerButton);
+
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkLogin();
+            }
+        });
+
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signUp();
             }
         });
 
@@ -100,6 +117,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void signUp() {
+        Intent signUpIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+        signUpIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(signUpIntent);
     }
 
     private void signIn(){

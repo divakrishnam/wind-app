@@ -3,6 +3,7 @@ package com.example.divakrishna.wind;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -39,10 +41,15 @@ public class SetupActivity extends AppCompatActivity {
 
     private ProgressDialog mProgress;
 
+    private ActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+
+        actionBar = getSupportActionBar();
+        actionBar.hide();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -56,12 +63,15 @@ public class SetupActivity extends AppCompatActivity {
         mNameField = (EditText)findViewById(R.id.setupNameField);
         mSubmitButton = (Button)findViewById(R.id.setupSubmitButton);
 
+        Picasso.get().load(R.drawable.profile).transform(new RoundTransformation(400,1)).into(mSetupImageButton);
+
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startSetupAccount();
             }
         });
+
 
         mSetupImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +134,8 @@ public class SetupActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 mImageUri = result.getUri();
 
-                mSetupImageButton.setImageURI(mImageUri);
+                //mSetupImageButton.setImageURI(mImageUri);
+                Picasso.get().load(mImageUri).transform(new RoundTransformation(200,1)).into(mSetupImageButton);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
