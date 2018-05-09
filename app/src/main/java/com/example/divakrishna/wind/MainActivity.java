@@ -119,8 +119,13 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setUserimage(model.getUserimage());
+                viewHolder.setTime(model.getTimestamp());
 
                 viewHolder.setLikeButton(post_key);
+                viewHolder.setDislikeButton(post_key);
+
+                viewHolder.setSumLikes(post_key);
+                viewHolder.setSumDislikes(post_key);
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -145,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                                             mProcessLike = false;
                                         }else{
                                             mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
+                                            mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
 
                                             mProcessLike = false;
                                         }
@@ -164,9 +170,29 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mProcessLike = false;
                         mProcessDislike = true;
-                        if(mProcessDislike){
+                        mDatabaseDislike.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        }
+                                if(mProcessDislike){
+                                    if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+                                        mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+
+                                        mProcessDislike = false;
+                                    }else{
+                                        mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
+                                        mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+
+                                        mProcessDislike = false;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 });
             }
@@ -222,20 +248,63 @@ public class MainActivity extends AppCompatActivity {
         ImageButton mDislikeButton;
 
         DatabaseReference mDatabaseLike;
+        DatabaseReference mDatabaseDislike;
+
         FirebaseAuth mAuth;
+
+        TextView mSumLikes;
+        TextView mSumDislikes;
 
         public PostViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
 
+            mSumLikes = (TextView)mView.findViewById(R.id.sum_likes);
+            mSumDislikes = (TextView)mView.findViewById(R.id.sum_dislikes);
+
             mLikeButton = (ImageButton)mView.findViewById(R.id.like_button);
             mDislikeButton = (ImageButton)mView.findViewById(R.id.dislike_button);
 
             mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
-            mAuth = FirebaseAuth.getInstance();
-
             mDatabaseLike.keepSynced(true);
+
+            mDatabaseDislike = FirebaseDatabase.getInstance().getReference().child("Dislikes");
+            mDatabaseDislike.keepSynced(true);
+
+            mAuth = FirebaseAuth.getInstance();
+        }
+
+        public void setSumLikes(final String post_key){
+            mDatabaseLike.addValueEventListener(new ValueEventListener() {
+                @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    int count = (int) dataSnapshot.child(post_key).getChildrenCount();
+                    String sum = Integer.toString(count);
+                    mSumLikes.setText(sum);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setSumDislikes(final String post_key){
+            mDatabaseDislike.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int count = (int) dataSnapshot.child(post_key).getChildrenCount();
+                    String sum = Integer.toString(count);
+                    mSumDislikes.setText(sum);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         public void setLikeButton(final String post_key){
@@ -244,8 +313,28 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
                         mLikeButton.setImageResource(R.mipmap.ic_thumb_up_clicked);
+                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down);
                     } else{
                         mLikeButton.setImageResource(R.mipmap.ic_thumb_up);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        public void setDislikeButton(final String post_key){
+            mDatabaseDislike.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down_clicked);
+                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up);
+                    } else{
+                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down);
                     }
                 }
 
@@ -269,6 +358,11 @@ public class MainActivity extends AppCompatActivity {
         public void setDesc(String desc){
             TextView post_desc = (TextView) mView.findViewById(R.id.post_desc);
             post_desc.setText(desc);
+        }
+
+        public void setTime(String time){
+            TextView post_time = (TextView) mView.findViewById(R.id.post_time);
+            post_time.setText(time);
         }
     }
 

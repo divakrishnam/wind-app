@@ -7,6 +7,8 @@ public class Post {
 
     private String userimage;
 
+    private String timestamp;
+
     public Post(){
 
     }
@@ -41,5 +43,14 @@ public class Post {
 
     public void setUserimage(String userimage) {
         this.userimage = userimage;
+    }
+
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

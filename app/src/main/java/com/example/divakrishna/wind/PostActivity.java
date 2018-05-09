@@ -24,6 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class PostActivity extends AppCompatActivity {
 
     private EditText mPostDesc;
@@ -39,6 +43,7 @@ public class PostActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
 
     private DatabaseReference mDatabaseUser;
+    private String timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public class PostActivity extends AppCompatActivity {
 
         final String desc_val = mPostDesc.getText().toString().trim();
 
+        timeStamp = new SimpleDateFormat("MMM dd, yyyy HH:mm").format(new Date());
+
         if(!TextUtils.isEmpty(desc_val)){
 
             mProgress.show();
@@ -83,6 +90,7 @@ public class PostActivity extends AppCompatActivity {
             mDatabaseUser.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    newPost.child("timestamp").setValue(timeStamp);
                     newPost.child("desc").setValue(desc_val);
                     newPost.child("uid").setValue(mCurrentUser.getUid());
                     newPost.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {

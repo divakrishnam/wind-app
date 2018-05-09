@@ -20,17 +20,17 @@
                 android:id="@+id/post_userimage"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/profile"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile" />
 
             <TextView
                 android:id="@+id/post_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:text="Username"
-                android:layout_gravity="center_vertical"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -38,35 +38,74 @@
             android:id="@+id/post_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="10"
-            android:layout_marginTop="6dp"/>
+            android:text="Description" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="6dp"
-            android:gravity="right">
+            android:layout_marginTop="14dp">
 
-            <ImageButton
-                android:id="@+id/like_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/ic_thumb_up"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/transparent"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true">
 
-            <ImageButton
-                android:id="@+id/dislike_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/ic_thumb_down"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/transparent" />
+                <TextView
+                    android:id="@+id/post_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Timestamp"
+                    android:textSize="12dp"/>
+            </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true">
+
+                <ImageButton
+                    android:id="@+id/like_button"
+                    android:layout_width="18dp"
+                    android:layout_height="20dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/ic_thumb_up" />
+
+                <TextView
+                    android:id="@+id/sum_likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:textSize="12dp"
+                    android:text="0"
+                    android:layout_gravity="center_vertical"/>
+
+                <ImageButton
+                    android:id="@+id/dislike_button"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@android:color/transparent"
+                    android:src="@mipmap/ic_thumb_down" />
+
+                <TextView
+                    android:id="@+id/sum_dislikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:textSize="12dp"
+                    android:text="0"
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
