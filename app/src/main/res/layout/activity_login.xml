@@ -25,6 +25,8 @@
         android:fontFamily="sans-serif"
         android:background="#FFFFFF"
         android:padding="10dp"
+        android:focusable="true"
+        android:nextFocusDown="@id/loginPasswordField"
         android:hint="Email"/>
 
     <EditText
@@ -35,6 +37,7 @@
         android:inputType="textPassword"
         android:padding="10dp"
         android:background="#FFFFFF"
+        android:nextFocusDown="@id/loginButton"
         android:layout_marginTop="10dp"
         android:hint="Password" />
 
