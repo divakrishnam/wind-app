@@ -1,49 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="20dp"
     tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="65dp"
+        android:src="@drawable/logo"
+        android:layout_gravity="center_horizontal"/>
 
     <EditText
         android:id="@+id/loginEmailField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif"
+        android:background="#FFFFFF"
+        android:padding="10dp"
         android:hint="Email"/>
 
     <EditText
         android:id="@+id/loginPasswordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/loginEmailField"
+        android:fontFamily="sans-serif"
         android:inputType="textPassword"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:layout_marginTop="10dp"
         android:hint="Password" />
 
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/loginPasswordField"
-        android:text="Login"/>
+        android:layout_marginTop="15dp"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="#FFFFFF"
+        android:text="Log In"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="25dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No account yet? "
+            android:textColor="#FFFF"/>
+
+        <TextView
+            android:id="@+id/registerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:text="Create One" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="25dp">
+
+        <View
+            android:layout_width="145dp"
+            android:layout_height="2dp"
+            android:background="#FFFFFF"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="or"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#FFFFFF"/>
+
+        <View
+            android:layout_width="145dp"
+            android:layout_height="2dp"
+            android:background="#FFFFFF"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
 
     <com.google.android.gms.common.SignInButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/googleBtn"
-        android:layout_below="@id/loginButton">
+        android:layout_marginTop="30dp">
 
     </com.google.android.gms.common.SignInButton>
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/googleBtn"
-        android:text="Registration"/>
-
-</RelativeLayout>
+</LinearLayout>

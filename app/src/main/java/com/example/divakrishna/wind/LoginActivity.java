@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mLoginPasswordField;
     private Button mLoginButton;
 
-    private Button mRegisterButton;
+    private TextView mRegisterButton;
 
     private FirebaseAuth mAuth;
     private ProgressDialog mProgress;
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginButton = (Button) findViewById(R.id.loginButton);
 
-        mRegisterButton = (Button) findViewById(R.id.registerButton);
+        mRegisterButton = (TextView) findViewById(R.id.registerButton);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override

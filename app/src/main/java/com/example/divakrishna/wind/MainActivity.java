@@ -130,7 +130,11 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MainActivity.this, post_key, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this, post_key, Toast.LENGTH_LONG).show();
+
+                        Intent singlePostIntent = new Intent(MainActivity.this, PostSingleActivity.class);
+                        singlePostIntent.putExtra("post_id", post_key);
+                        startActivity(singlePostIntent);
                     }
                 });
 
