@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorAccent"
     android:orientation="vertical"
     android:gravity="center_vertical"
     android:padding="20dp"
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:textColor="#FFFFFF"
         android:text="Log In"/>
 
@@ -61,14 +61,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No account yet? "
-            android:textColor="#FFFF"/>
+            android:textColor="@color/colorPrimary"/>
 
         <TextView
             android:id="@+id/registerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorPrimary"
             android:text="Create One" />
     </LinearLayout>
 

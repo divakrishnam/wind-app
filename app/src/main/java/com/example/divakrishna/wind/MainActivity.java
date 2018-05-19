@@ -37,6 +37,12 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mPostList;
@@ -47,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabaseLike;
 
-    private DatabaseReference mDatabaseDislike;
+    private DatabaseReference mDatabaseComments;
 
     private Query postQuery;
 
@@ -55,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private boolean mProcessLike = false;
-    private boolean mProcessDislike = false;
 
     private FirebaseRecyclerAdapter<Post, PostViewHolder> firebaseRecyclerAdapter;
 
@@ -68,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() == null){
-                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(loginIntent);
-                }
+            if(firebaseAuth.getCurrentUser() == null){
+                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(loginIntent);
+            }
             }
         };
 
@@ -85,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
         mDatabaseLike.keepSynced(true);
 
-        mDatabaseDislike = FirebaseDatabase.getInstance().getReference().child("Dislikes");
-        mDatabaseDislike.keepSynced(true);
+        mDatabaseComments = FirebaseDatabase.getInstance().getReference().child("Comments");
+        mDatabaseComments.keepSynced(true);
 
         postQuery = mDatabase.orderByKey();
 
@@ -122,72 +127,55 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.setTime(model.getTimestamp());
 
                 viewHolder.setLikeButton(post_key);
-                viewHolder.setDislikeButton(post_key);
 
-                viewHolder.setSumLikes(post_key);
-                viewHolder.setSumDislikes(post_key);
+                viewHolder.setSumComments(post_key);
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Toast.makeText(MainActivity.this, post_key, Toast.LENGTH_LONG).show();
 
-                        Intent singlePostIntent = new Intent(MainActivity.this, PostSingleActivity.class);
-                        singlePostIntent.putExtra("post_id", post_key);
-                        startActivity(singlePostIntent);
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            final String username = (String)dataSnapshot.child("name").getValue();
+                            final String userimage = (String)dataSnapshot.child("image").getValue();
+
+                            final Intent singlePostIntent = new Intent(MainActivity.this, PostSingleActivity.class);
+
+                            singlePostIntent.putExtra("current_username", username);
+                            singlePostIntent.putExtra("current_userimage", userimage);
+
+                            singlePostIntent.putExtra("post_id", post_key);
+                            singlePostIntent.putExtra("current_userid", mAuth.getCurrentUser().getUid());
+
+                            startActivity(singlePostIntent);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     }
                 });
 
                 viewHolder.mLikeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mProcessLike = true;
-                        mProcessDislike = false;
-                            mDatabaseLike.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    if(mProcessLike){
-                                        if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
-                                            mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-
-                                            mProcessLike = false;
-                                        }else{
-                                            mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
-                                            mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-
-                                            mProcessLike = false;
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                    }
-                });
-
-                viewHolder.mDislikeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mProcessLike = false;
-                        mProcessDislike = true;
-                        mDatabaseDislike.addValueEventListener(new ValueEventListener() {
+                    mProcessLike = true;
+                        mDatabaseLike.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                if(mProcessDislike){
+                                if(mProcessLike){
                                     if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
-                                        mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-
-                                        mProcessDislike = false;
-                                    }else{
-                                        mDatabaseDislike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
                                         mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
 
-                                        mProcessDislike = false;
+                                        mProcessLike = false;
+                                    }else{
+                                        mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Random value");
+
+                                        mProcessLike = false;
                                     }
                                 }
                             }
@@ -208,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthListener);
         firebaseRecyclerAdapter.startListening();
     }
@@ -224,68 +211,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkUserExist() {
         if(mAuth.getCurrentUser() != null) {
-        final String user_id = mAuth.getCurrentUser().getUid();
+            final String user_id = mAuth.getCurrentUser().getUid();
 
-        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild(user_id)){
-                    Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
-                    setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(setupIntent);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-    }
-
-    public class PostViewHolder extends RecyclerView.ViewHolder{
-
-        View mView;
-
-        ImageButton mLikeButton;
-        ImageButton mDislikeButton;
-
-        DatabaseReference mDatabaseLike;
-        DatabaseReference mDatabaseDislike;
-
-        FirebaseAuth mAuth;
-
-        TextView mSumLikes;
-        TextView mSumDislikes;
-
-        public PostViewHolder(View itemView) {
-            super(itemView);
-
-            mView = itemView;
-
-            mSumLikes = (TextView)mView.findViewById(R.id.sum_likes);
-            mSumDislikes = (TextView)mView.findViewById(R.id.sum_dislikes);
-
-            mLikeButton = (ImageButton)mView.findViewById(R.id.like_button);
-            mDislikeButton = (ImageButton)mView.findViewById(R.id.dislike_button);
-
-            mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
-            mDatabaseLike.keepSynced(true);
-
-            mDatabaseDislike = FirebaseDatabase.getInstance().getReference().child("Dislikes");
-            mDatabaseDislike.keepSynced(true);
-
-            mAuth = FirebaseAuth.getInstance();
-        }
-
-        public void setSumLikes(final String post_key){
-            mDatabaseLike.addValueEventListener(new ValueEventListener() {
+            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
                 @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                    int count = (int) dataSnapshot.child(post_key).getChildrenCount();
-                    String sum = Integer.toString(count);
-                    mSumLikes.setText(sum);
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild(user_id)){
+                        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+                        setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(setupIntent);
+                    }
                 }
 
                 @Override
@@ -294,14 +229,44 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
 
-        public void setSumDislikes(final String post_key){
-            mDatabaseDislike.addValueEventListener(new ValueEventListener() {
+    public class PostViewHolder extends RecyclerView.ViewHolder{
+
+        View mView;
+
+        ImageView mLikeButton;
+
+        DatabaseReference mDatabaseLike;
+
+        FirebaseAuth mAuth;
+
+        TextView mSumLikes;
+        TextView mSumComments;
+
+        public PostViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+
+            mSumLikes = (TextView)mView.findViewById(R.id.sum_loves);
+            mSumComments = (TextView)mView.findViewById(R.id.sum_comments);
+
+            mLikeButton = (ImageView)mView.findViewById(R.id.love_button);
+
+            mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+            mDatabaseLike.keepSynced(true);
+
+            mAuth = FirebaseAuth.getInstance();
+        }
+
+        public void setSumComments(final String post_key){
+            mDatabaseComments.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int count = (int) dataSnapshot.child(post_key).getChildrenCount();
-                    String sum = Integer.toString(count);
-                    mSumDislikes.setText(sum);
+                    String sum = Integer.toString(count) + " comments";
+                    mSumComments.setText(sum);
                 }
 
                 @Override
@@ -315,30 +280,14 @@ public class MainActivity extends AppCompatActivity {
             mDatabaseLike.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    int count = (int) dataSnapshot.child(post_key).getChildrenCount();
+                    String sum = Integer.toString(count) + " likes";
+                    mSumLikes.setText(sum);
+
                     if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
-                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up_clicked);
-                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down);
+                        mLikeButton.setImageResource(R.mipmap.ic_love_clicked);
                     } else{
-                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-        public void setDislikeButton(final String post_key){
-            mDatabaseDislike.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
-                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down_clicked);
-                        mLikeButton.setImageResource(R.mipmap.ic_thumb_up);
-                    } else{
-                        mDislikeButton.setImageResource(R.mipmap.ic_thumb_down);
+                        mLikeButton.setImageResource(R.mipmap.ic_love);
                     }
                 }
 
@@ -366,7 +315,66 @@ public class MainActivity extends AppCompatActivity {
 
         public void setTime(String time){
             TextView post_time = (TextView) mView.findViewById(R.id.post_time);
-            post_time.setText(time);
+
+            try{
+                SimpleDateFormat format =new SimpleDateFormat("yyyy.MMM.dd G 'at' HH:mm:ss");
+                Date past = format.parse(time);
+                Date now = new Date();
+                long seconds= TimeUnit.MILLISECONDS.toSeconds(now.getTime() - past.getTime());
+                long minutes=TimeUnit.MILLISECONDS.toMinutes(now.getTime() - past.getTime());
+                long hours=TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime());
+                long days=TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime());
+
+                Calendar cal = Calendar.getInstance();
+
+                String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+                format = new SimpleDateFormat("dd");
+                String d = format.format(past);
+
+                if(day.equals(d)){
+                    if(seconds<60){
+                        time = "Just Now";
+                        post_time.setText(time);
+                    } else if(minutes<60){
+                        time = minutes+" minutes ago";
+                        post_time.setText(time);
+                    } else if(hours<24){
+                        time = hours+" hour ago";
+                        post_time.setText(time);
+                    }
+                } else {
+                    if(days<7){
+                        format = new SimpleDateFormat("HH:mm");
+                        if(days<2){
+                            time = "Yesterday at "+format.format(past);
+                            post_time.setText(time);
+                        }else {
+                            time = days+" days ago at "+format.format(past);
+                            post_time.setText(time);
+                        }
+                    }
+                    else
+                    {
+                        String year = Integer.toString(cal.get(Calendar.YEAR));
+                        format = new SimpleDateFormat("yyyy");
+                        String y = format.format(past);
+
+                        if(year.equals(y)){
+                            format = new SimpleDateFormat("MMM dd HH:mm");
+                            time = format.format(past);
+                            post_time.setText(time);
+                        }
+                        else{
+                            format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                            time = format.format(past);
+                            post_time.setText(time);
+                        }
+
+                    }
+                }
+            }catch (ParseException e){
+                e.printStackTrace();
+            }
         }
     }
 

@@ -1,29 +1,190 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostSingleActivity">
 
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
-            <TextView
-                android:id="@+id/singlePostDesc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Description" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
 
-            <Button
-                android:id="@+id/singleRemoveButton"
+            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove Post"
-                android:visibility="invisible"/>
+                android:layout_marginTop="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/singlePostImage"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/profile" />
+
+                    <TextView
+                        android:id="@+id/singlePostUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:text="Username"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/singlePostDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="2dp"
+                    android:text="Description" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="-1dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true">
+
+                            <ImageView
+                                android:id="@+id/lovePostButton"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_marginRight="8dp"
+                                android:background="@android:color/transparent"
+                                android:src="@mipmap/ic_love" />
+
+                            <ImageView
+                                android:id="@+id/commentPostButton"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:background="@android:color/transparent"
+                                android:src="@mipmap/ic_comment" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/sumPostComments"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginLeft="2dp"
+                            android:textSize="12dp"
+                            android:text="0 comments"
+                            android:layout_gravity="center_vertical"/>
+
+
+                        <TextView
+                            android:id="@+id/singlePostTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Timestamp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="2dp"
+                            android:textSize="12dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp"
+                        android:layout_alignParentRight="true">
+
+
+
+                        <TextView
+                            android:id="@+id/sumPostLoves"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="12dp"
+                            android:textSize="12dp"
+                            android:text="0 likes"
+                            android:layout_gravity="center_vertical"/>
+
+                    </LinearLayout>
+
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+             </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.RecyclerView android:id="@+id/comment_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="54dp">
+
+            </android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
 
+    </ScrollView>
 
-</ScrollView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/singlePostComment"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginRight="50dp"
+            android:padding="10dp"
+            android:layout_alignParentLeft="true"
+            android:background="@color/colorAccent"
+            android:hint="Comment"/>
+
+        <ImageButton
+            android:id="@+id/singlePostSend"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:padding="15dp"
+            android:src="@mipmap/ic_send"
+            android:background="@color/colorPrimary"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

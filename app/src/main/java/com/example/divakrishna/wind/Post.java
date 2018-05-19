@@ -9,6 +9,8 @@ public class Post {
 
     private String timestamp;
 
+    private String comment;
+
     public Post(){
 
     }
@@ -52,5 +54,15 @@ public class Post {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

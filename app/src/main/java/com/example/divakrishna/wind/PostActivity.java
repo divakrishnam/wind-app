@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,9 +33,6 @@ public class PostActivity extends AppCompatActivity {
 
     private EditText mPostDesc;
 
-    //private Button mSubmitButton;
-
-    //private StorageReference mStorage;
     private DatabaseReference mDatabase;
 
     private ProgressDialog mProgress;
@@ -54,23 +52,13 @@ public class PostActivity extends AppCompatActivity {
 
         mCurrentUser = mAuth.getCurrentUser();
 
-        //mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Post");
 
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser.getUid());
 
         mPostDesc = (EditText)findViewById(R.id.descField);
 
-        //mSubmitButton = (Button)findViewById(R.id.submitButton);
-
         mProgress = new ProgressDialog(this);
-        
-//        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startPost();
-//            }
-//        });
     }
 
     private void startPost() {
@@ -79,7 +67,7 @@ public class PostActivity extends AppCompatActivity {
 
         final String desc_val = mPostDesc.getText().toString().trim();
 
-        timeStamp = new SimpleDateFormat("MMM dd, yyyy HH:mm").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyy.MMM.dd G 'at' HH:mm:ss").format(new Date());
 
         if(!TextUtils.isEmpty(desc_val)){
 

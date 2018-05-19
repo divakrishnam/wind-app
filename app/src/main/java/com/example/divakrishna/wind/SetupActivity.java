@@ -41,15 +41,10 @@ public class SetupActivity extends AppCompatActivity {
 
     private ProgressDialog mProgress;
 
-    private ActionBar actionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
-        actionBar = getSupportActionBar();
-        actionBar.hide();
 
         mAuth = FirebaseAuth.getInstance();
 
