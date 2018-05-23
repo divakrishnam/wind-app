@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mLoginButton;
 
     private FirebaseAuth mAuth;
+
     private DatabaseReference mDatabase;
 
     private ProgressDialog mProgress;
@@ -50,11 +51,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         mProgress = new ProgressDialog(this);
 
-        mNameField = (EditText)findViewById(R.id.nameField);
-        mEmailField = (EditText)findViewById(R.id.emailField);
-        mPasswordField = (EditText)findViewById(R.id.passwordField);
-        mRegisterButton = (Button) findViewById(R.id.registerButton);
-        mLoginButton = (TextView)findViewById(R.id.loginButton);
+        mNameField = findViewById(R.id.nameField);
+        mEmailField = findViewById(R.id.emailField);
+        mPasswordField = findViewById(R.id.passwordField);
+        mRegisterButton = findViewById(R.id.registerButton);
+        mLoginButton = findViewById(R.id.loginButton);
 
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
         String password = mPasswordField.getText().toString().trim();
 
         if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
-            mProgress.setMessage("Signing Up ...");
+            mProgress.setMessage("Sign Up ...");
             mProgress.show();
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

@@ -3,10 +3,10 @@ package com.example.divakrishna.wind;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,11 +54,16 @@ public class SetupActivity extends AppCompatActivity {
 
         mProgress = new ProgressDialog(this);
 
-        mSetupImageButton = (ImageButton)findViewById(R.id.setupImageButton);
-        mNameField = (EditText)findViewById(R.id.setupNameField);
-        mSubmitButton = (Button)findViewById(R.id.setupSubmitButton);
+        mSetupImageButton = findViewById(R.id.setupImageButton);
+        mNameField = findViewById(R.id.setupNameField);
+        mSubmitButton = findViewById(R.id.setupSubmitButton);
 
-        Picasso.get().load(R.drawable.profile).transform(new RoundTransformation(400,1)).into(mSetupImageButton);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        Picasso.get().load(R.drawable.profile).transform(new RoundTransformation(width/2*4,1)).into(mSetupImageButton);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +71,6 @@ public class SetupActivity extends AppCompatActivity {
                 startSetupAccount();
             }
         });
-
 
         mSetupImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +134,11 @@ public class SetupActivity extends AppCompatActivity {
                 mImageUri = result.getUri();
 
                 //mSetupImageButton.setImageURI(mImageUri);
-                Picasso.get().load(mImageUri).transform(new RoundTransformation(200,1)).into(mSetupImageButton);
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int height = displayMetrics.heightPixels;
+                int width = displayMetrics.widthPixels;
+                Picasso.get().load(mImageUri).transform(new RoundTransformation(width/2*4,1)).into(mSetupImageButton);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }

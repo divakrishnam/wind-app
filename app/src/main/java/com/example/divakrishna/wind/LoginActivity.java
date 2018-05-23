@@ -20,14 +20,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,14 +71,14 @@ public class LoginActivity extends AppCompatActivity {
 
         mProgress = new ProgressDialog(this);
 
-        mGoogleBtn = (SignInButton)findViewById(R.id.googleBtn);
+        mGoogleBtn = findViewById(R.id.googleBtn);
 
-        mLoginEmailField = (EditText) findViewById(R.id.loginEmailField);
-        mLoginPasswordField = (EditText) findViewById(R.id.loginPasswordField);
+        mLoginEmailField = findViewById(R.id.loginEmailField);
+        mLoginPasswordField = findViewById(R.id.loginPasswordField);
 
-        mLoginButton = (Button) findViewById(R.id.loginButton);
+        mLoginButton = findViewById(R.id.loginButton);
 
-        mRegisterButton = (TextView) findViewById(R.id.registerButton);
+        mRegisterButton = findViewById(R.id.registerButton);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         if(requestCode == RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-            mProgress.setMessage("Starting Sign in ...");
+            mProgress.setMessage("Sign in ...");
             mProgress.show();
 
             if(result.isSuccess()){
@@ -179,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
 
-            mProgress.setMessage("Checking Login ...");
+            mProgress.setMessage("Login ...");
             mProgress.show();
 
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

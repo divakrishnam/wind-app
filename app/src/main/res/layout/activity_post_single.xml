@@ -4,13 +4,9 @@
     android:layout_height="match_parent"
     tools:context=".PostSingleActivity">
 
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,17 +24,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:paddingRight="8dp"
+                android:paddingLeft="6dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="2dp">
 
                     <ImageView
                         android:id="@+id/singlePostImage"
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/profile" />
 
@@ -118,7 +118,7 @@
                             android:text="Timestamp"
                             android:layout_marginTop="5dp"
                             android:layout_marginLeft="2dp"
-                            android:textSize="12dp"/>
+                            android:textSize="10dp"/>
 
                     </LinearLayout>
 
@@ -129,13 +129,10 @@
                         android:layout_marginTop="4dp"
                         android:layout_alignParentRight="true">
 
-
-
                         <TextView
                             android:id="@+id/sumPostLoves"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="12dp"
                             android:textSize="12dp"
                             android:text="0 likes"
                             android:layout_gravity="center_vertical"/>
@@ -174,6 +171,7 @@
             android:padding="10dp"
             android:layout_alignParentLeft="true"
             android:background="@color/colorAccent"
+            android:textCursorDrawable="@null"
             android:hint="Comment"/>
 
         <ImageButton

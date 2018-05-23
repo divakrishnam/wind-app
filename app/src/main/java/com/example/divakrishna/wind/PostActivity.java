@@ -3,14 +3,12 @@ package com.example.divakrishna.wind;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,11 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class PostActivity extends AppCompatActivity {
@@ -48,6 +43,9 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Post Something");
+
         mAuth = FirebaseAuth.getInstance();
 
         mCurrentUser = mAuth.getCurrentUser();
@@ -56,7 +54,7 @@ public class PostActivity extends AppCompatActivity {
 
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser.getUid());
 
-        mPostDesc = (EditText)findViewById(R.id.descField);
+        mPostDesc = findViewById(R.id.descField);
 
         mProgress = new ProgressDialog(this);
     }
@@ -67,7 +65,7 @@ public class PostActivity extends AppCompatActivity {
 
         final String desc_val = mPostDesc.getText().toString().trim();
 
-        timeStamp = new SimpleDateFormat("yyyy.MMM.dd G 'at' HH:mm:ss").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
 
         if(!TextUtils.isEmpty(desc_val)){
 
@@ -85,7 +83,7 @@ public class PostActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                startActivity(new Intent(PostActivity.this, MainActivity.class));
+
                             }
                         }
                     });
@@ -93,7 +91,7 @@ public class PostActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                startActivity(new Intent(PostActivity.this, MainActivity.class));
+
                             }
                         }
                     });

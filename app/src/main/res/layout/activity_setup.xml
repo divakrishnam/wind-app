@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
     tools:context=".SetupActivity">
 
     <LinearLayout
@@ -26,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="#FFFFFF"
+            android:background="@color/colorAccent"
+            android:textCursorDrawable="@null"
             android:padding="10dp"
             android:maxLength="13"
             android:hint="Your Name"/>
@@ -36,12 +36,13 @@
             android:layout_height="150dp"
             android:orientation="vertical"
             android:layout_marginTop="10dp"
-            android:background="#FFFFFF">
+            android:background="@color/colorAccent">
             <EditText
                 android:id="@+id/setupDescField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFFFFF"
+                android:background="@color/colorAccent"
+                android:textCursorDrawable="@null"
                 android:padding="10dp"
                 android:inputType="textMultiLine"
                 android:hint="Your Description"/>

@@ -1,28 +1,26 @@
 package com.example.divakrishna.wind;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -33,14 +31,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,11 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mPostList;
 
     private DatabaseReference mDatabase;
-
+    private DatabaseReference mDatabaseUni;
     private DatabaseReference mDatabaseUsers;
-
     private DatabaseReference mDatabaseLike;
-
     private DatabaseReference mDatabaseComments;
 
     private Query postQuery;
@@ -69,17 +64,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Timeline");
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            if(firebaseAuth.getCurrentUser() == null){
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(loginIntent);
-            }
+                if(firebaseAuth.getCurrentUser() == null){
+                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                }
             }
         };
+
+        mDatabaseUni = FirebaseDatabase.getInstance().getReference();
+        mDatabaseUni.keepSynced(true);
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Post");
         mDatabase.keepSynced(true);
@@ -134,35 +135,38 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            final String username = (String)dataSnapshot.child("name").getValue();
-                            final String userimage = (String)dataSnapshot.child("image").getValue();
+                        mDatabaseUni.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                final String username = (String)dataSnapshot.child("Users").child(mAuth.getCurrentUser().getUid()).child("name").getValue();
+                                final String userimage = (String)dataSnapshot.child("Users").child(mAuth.getCurrentUser().getUid()).child("image").getValue();
+                                final String userpost = (String)dataSnapshot.child("Post").child(post_key).child("uid").getValue();
 
-                            final Intent singlePostIntent = new Intent(MainActivity.this, PostSingleActivity.class);
+                                final Intent singlePostIntent = new Intent(MainActivity.this, PostSingleActivity.class);
 
-                            singlePostIntent.putExtra("current_username", username);
-                            singlePostIntent.putExtra("current_userimage", userimage);
+                                singlePostIntent.putExtra("current_username", username);
+                                singlePostIntent.putExtra("current_userimage", userimage);
 
-                            singlePostIntent.putExtra("post_id", post_key);
-                            singlePostIntent.putExtra("current_userid", mAuth.getCurrentUser().getUid());
+                                singlePostIntent.putExtra("current_userpost", userpost);
 
-                            startActivity(singlePostIntent);
-                        }
+                                singlePostIntent.putExtra("post_id", post_key);
+                                singlePostIntent.putExtra("current_userid", mAuth.getCurrentUser().getUid());
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                                startActivity(singlePostIntent);
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 });
 
                 viewHolder.mLikeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    mProcessLike = true;
+                        mProcessLike = true;
                         mDatabaseLike.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -249,10 +253,10 @@ public class MainActivity extends AppCompatActivity {
 
             mView = itemView;
 
-            mSumLikes = (TextView)mView.findViewById(R.id.sum_loves);
-            mSumComments = (TextView)mView.findViewById(R.id.sum_comments);
+            mSumLikes = mView.findViewById(R.id.sum_loves);
+            mSumComments = mView.findViewById(R.id.sum_comments);
 
-            mLikeButton = (ImageView)mView.findViewById(R.id.love_button);
+            mLikeButton = mView.findViewById(R.id.love_button);
 
             mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
             mDatabaseLike.keepSynced(true);
@@ -299,25 +303,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void setUserimage(final String userimage) {
-            ImageView post_userimage = (ImageView) mView.findViewById(R.id.post_userimage);
-            Picasso.get().load(userimage).transform(new RoundTransformation(200,1)).into(post_userimage);
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+            ImageView post_userimage = mView.findViewById(R.id.post_userimage);
+            Picasso.get().load(userimage).transform(new RoundTransformation(width/2*4,1)).into(post_userimage);
         }
 
         public void setUsername(String username){
-            TextView post_username = (TextView) mView.findViewById(R.id.post_username);
+            TextView post_username = mView.findViewById(R.id.post_username);
             post_username.setText(username);
         }
 
         public void setDesc(String desc){
-            TextView post_desc = (TextView) mView.findViewById(R.id.post_desc);
-            post_desc.setText(desc);
+            TextView post_desc = mView.findViewById(R.id.post_desc);
+
+            if (desc.length()>200) {
+                desc=desc.substring(0,400)+" ...Read More";
+                Spannable spannable = new SpannableString(desc);
+                spannable.setSpan(new ForegroundColorSpan(Color.DKGRAY), desc.indexOf(" ...Read More"),desc.indexOf(" ...Read More") + " ...Read More".length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                post_desc.setText(spannable);
+
+            }else{
+                post_desc.setText(desc);
+            }
+
         }
 
         public void setTime(String time){
-            TextView post_time = (TextView) mView.findViewById(R.id.post_time);
+            TextView post_time = mView.findViewById(R.id.post_time);
 
             try{
-                SimpleDateFormat format =new SimpleDateFormat("yyyy.MMM.dd G 'at' HH:mm:ss");
+                SimpleDateFormat format =new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
                 Date past = format.parse(time);
                 Date now = new Date();
                 long seconds= TimeUnit.MILLISECONDS.toSeconds(now.getTime() - past.getTime());
@@ -360,12 +378,12 @@ public class MainActivity extends AppCompatActivity {
                         String y = format.format(past);
 
                         if(year.equals(y)){
-                            format = new SimpleDateFormat("MMM dd HH:mm");
+                            format = new SimpleDateFormat("MMM dd HH:mm", Locale.US);
                             time = format.format(past);
                             post_time.setText(time);
                         }
                         else{
-                            format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                            format = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.US);
                             time = format.format(past);
                             post_time.setText(time);
                         }
@@ -389,6 +407,14 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_add){
             startActivity(new Intent(MainActivity.this, PostActivity.class));
             finish();
+        }
+
+        if(item.getItemId() == R.id.action_profile){
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+        }
+
+        if(item.getItemId() == R.id.action_about){
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
         }
 
         if(item.getItemId() == R.id.action_logout){

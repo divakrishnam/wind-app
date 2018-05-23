@@ -15,11 +15,12 @@ public class Post {
 
     }
 
-    public Post(String desc, String username, String userimage) {
+    public Post(String desc, String username, String userimage, String timestamp) {
 
         this.desc = desc;
         this.username = username;
         this.userimage = userimage;
+        this.timestamp = timestamp;
     }
 
     public String getDesc() {

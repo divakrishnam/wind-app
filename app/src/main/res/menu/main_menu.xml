@@ -8,8 +8,12 @@
         android:title="Add Post"
         app:showAsAction="always"/>
 
-    <item android:id="@+id/action_settings"
-        android:title="Settings"
+    <item android:id="@+id/action_profile"
+        android:title="Profile"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_about"
+        android:title="About"
         app:showAsAction="never"/>
 
     <item android:id="@+id/action_logout"

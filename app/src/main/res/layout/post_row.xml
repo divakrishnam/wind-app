@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/post_userimage"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile" />
 
@@ -43,8 +43,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:ellipsize="end"
-            android:maxLines="10"
             android:textColor="#000000"
             android:layout_marginLeft="2dp"
             android:text="Description" />
