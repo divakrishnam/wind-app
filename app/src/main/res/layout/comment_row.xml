@@ -3,64 +3,29 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:longClickable="true"
-    android:layout_marginTop="3dp">
+    android:id="@+id/cvComment"
+    app:cardCornerRadius="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingRight="8dp"
-        android:paddingLeft="8dp"
-        android:paddingTop="9dp"
-        android:paddingBottom="8dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/commentUserimage"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile" />
+        android:padding="10dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
-
-
-                <TextView
-                    android:id="@+id/commentUsername"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#000000"
-                    android:text="Username"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/commentPost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:textColor="#000000"
                     android:text="Comment"/>
 
-                <TextView
-                    android:id="@+id/commentPostTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Timestamp"
-                    android:textSize="10dp"/>
-
             </LinearLayout>
-
-        </LinearLayout>
 
     </LinearLayout>
 

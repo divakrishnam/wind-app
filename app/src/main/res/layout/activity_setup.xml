@@ -14,10 +14,11 @@
 
         <ImageButton
             android:id="@+id/setupImageButton"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop"
+            android:src="@drawable/profile"
             android:background="@android:color/transparent"/>
 
         <EditText
@@ -28,25 +29,8 @@
             android:background="@color/colorAccent"
             android:textCursorDrawable="@null"
             android:padding="10dp"
-            android:maxLength="13"
+            android:maxLength="35"
             android:hint="Your Name"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorAccent">
-            <EditText
-                android:id="@+id/setupDescField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
-                android:textCursorDrawable="@null"
-                android:padding="10dp"
-                android:inputType="textMultiLine"
-                android:hint="Your Description"/>
-        </LinearLayout>
     </LinearLayout>
 
     <Button
@@ -54,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
+        android:background="#1f3549"
         android:textColor="#FFFFFF"
         android:padding="15dp"
         android:text="Simpan"/>

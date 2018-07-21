@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:gravity="center_vertical"
     android:padding="20dp"
     tools:context=".RegisterActivity">
 
     <ImageView
+        android:layout_marginTop="5dp"
         android:layout_width="180dp"
         android:layout_height="65dp"
         android:src="@drawable/logo"
@@ -52,7 +53,7 @@
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="#1f3549"
         android:layout_marginTop="15dp"
         android:textColor="#FFFFFF"
         android:text="Registration"/>
@@ -68,14 +69,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Have an account? "
-            android:textColor="@color/colorPrimary"/>
+            android:textColor="#FFFFFF"/>
 
         <TextView
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
+            android:textColor="#FFFFFF"
             android:text="Sign In" />
     </LinearLayout>
 

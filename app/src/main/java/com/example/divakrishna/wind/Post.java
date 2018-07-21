@@ -11,16 +11,19 @@ public class Post {
 
     private String comment;
 
+    private String uid;
+
     public Post(){
 
     }
 
-    public Post(String desc, String username, String userimage, String timestamp) {
+    public Post(String desc, String username, String userimage, String timestamp, String uid) {
 
         this.desc = desc;
         this.username = username;
         this.userimage = userimage;
         this.timestamp = timestamp;
+        this.uid = uid;
     }
 
     public String getDesc() {
@@ -66,4 +69,13 @@ public class Post {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
 }

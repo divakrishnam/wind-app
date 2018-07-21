@@ -2,7 +2,9 @@ package com.example.divakrishna.wind;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +37,8 @@ import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Timeline");
+        getSupportActionBar().setElevation(0);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -75,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
+                    finish();
                 }
             }
         };
@@ -121,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position, @NonNull Post model) {
 
                 final String post_key = getRef(position).getKey();
+
+                final String getUser = model.getUsername();
+                final String getImage = model.getUserimage();
+                final String getUseruid = model.getUid();
 
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setUsername(model.getUsername());
@@ -191,6 +201,54 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 });
+
+                viewHolder.mUsername.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                final Intent singlePostIntent = new Intent(MainActivity.this, ProfileActivity.class);
+
+//                                singlePostIntent.putExtra("current_username", getUser);
+//                                singlePostIntent.putExtra("current_userimage", getImage);
+                                singlePostIntent.putExtra("current_userid", getUseruid);
+
+                                startActivity(singlePostIntent);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+
+                viewHolder.mUserimage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                final Intent singlePostIntent = new Intent(MainActivity.this, ProfileActivity.class);
+
+//                                singlePostIntent.putExtra("current_username", getUser);
+//                                singlePostIntent.putExtra("current_userimage", getImage);
+                                singlePostIntent.putExtra("current_userid", getUseruid);
+
+                                startActivity(singlePostIntent);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
             }
         };
 
@@ -221,9 +279,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.hasChild(user_id)){
-                        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+                        Intent setupIntent = new Intent(MainActivity.this, LoginActivity.class);
                         setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(setupIntent);
+                        finish();
                     }
                 }
 
@@ -241,6 +300,9 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView mLikeButton;
 
+        TextView mUsername;
+        ImageView mUserimage;
+
         DatabaseReference mDatabaseLike;
 
         FirebaseAuth mAuth;
@@ -257,6 +319,8 @@ public class MainActivity extends AppCompatActivity {
             mSumComments = mView.findViewById(R.id.sum_comments);
 
             mLikeButton = mView.findViewById(R.id.love_button);
+            mUsername = mView.findViewById(R.id.post_username);
+            mUserimage = mView.findViewById(R.id.post_userimage);
 
             mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
             mDatabaseLike.keepSynced(true);
@@ -345,11 +409,18 @@ public class MainActivity extends AppCompatActivity {
 
                 Calendar cal = Calendar.getInstance();
 
-                String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
-                format = new SimpleDateFormat("dd");
-                String d = format.format(past);
 
-                if(day.equals(d)){
+                String year = Integer.toString(cal.get(Calendar.YEAR));
+                String month = Integer.toString(cal.get(Calendar.MONTH)+1);
+                String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+                SimpleDateFormat dformat = new SimpleDateFormat("d");
+                SimpleDateFormat mformat = new SimpleDateFormat("M");
+                SimpleDateFormat yformat = new SimpleDateFormat("yyyy");
+                String d = dformat.format(past);
+                String m = mformat.format(past);
+                String y = yformat.format(past);
+
+                if(day.equals(d) && month.equals(m) && year.equals(y)){
                     if(seconds<60){
                         time = "Just Now";
                         post_time.setText(time);
@@ -361,8 +432,8 @@ public class MainActivity extends AppCompatActivity {
                         post_time.setText(time);
                     }
                 } else {
-                    if(days<7){
-                        format = new SimpleDateFormat("HH:mm");
+                    if(days<7 && month.equals(m) && year.equals(y)){
+                        format = new SimpleDateFormat("HH:mm", Locale.US);
                         if(days<2){
                             time = "Yesterday at "+format.format(past);
                             post_time.setText(time);
@@ -373,17 +444,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        String year = Integer.toString(cal.get(Calendar.YEAR));
-                        format = new SimpleDateFormat("yyyy");
-                        String y = format.format(past);
-
-                        if(year.equals(y)){
-                            format = new SimpleDateFormat("MMM dd HH:mm", Locale.US);
+                        if(!year.equals(y)){
+                            format = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.US);
                             time = format.format(past);
                             post_time.setText(time);
                         }
                         else{
-                            format = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.US);
+                            format = new SimpleDateFormat("MMM dd HH:mm", Locale.US);
                             time = format.format(past);
                             post_time.setText(time);
                         }
@@ -406,11 +473,30 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_add){
             startActivity(new Intent(MainActivity.this, PostActivity.class));
-            finish();
         }
 
         if(item.getItemId() == R.id.action_profile){
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+
+            mDatabaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final String username = (String)dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("name").getValue();
+                    final String userimage = (String)dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("image").getValue();
+
+                    final Intent singlePostIntent = new Intent(MainActivity.this, ProfileActivity.class);
+
+//                    singlePostIntent.putExtra("current_username", username);
+//                    singlePostIntent.putExtra("current_userimage", userimage);
+                    singlePostIntent.putExtra("current_userid", mAuth.getCurrentUser().getUid());
+
+                    startActivity(singlePostIntent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         if(item.getItemId() == R.id.action_about){

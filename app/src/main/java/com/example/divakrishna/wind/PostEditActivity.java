@@ -24,7 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PostActivity extends AppCompatActivity {
+public class PostEditActivity extends AppCompatActivity {
+
+    private String mPostKey;
 
     private EditText mPostDesc;
 
@@ -32,32 +34,36 @@ public class PostActivity extends AppCompatActivity {
 
     private ProgressDialog mProgress;
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser mCurrentUser;
-
-    private DatabaseReference mDatabaseUser;
-    private String timeStamp;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Post Something");
+        mPostKey = getIntent().getExtras().getString("post_key");
+
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Edit Post");
         getSupportActionBar().setElevation(0);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        mCurrentUser = mAuth.getCurrentUser();
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Post");
-
-        mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser.getUid());
 
         mPostDesc = findViewById(R.id.descField);
 
         mProgress = new ProgressDialog(this);
+
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String userpost = (String)dataSnapshot.child(mPostKey).child("desc").getValue();
+
+                mPostDesc.setText(userpost);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void startPost() {
@@ -66,36 +72,14 @@ public class PostActivity extends AppCompatActivity {
 
         final String desc_val = mPostDesc.getText().toString().trim();
 
-        timeStamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
-
         if(!TextUtils.isEmpty(desc_val)){
 
             mProgress.show();
 
-            final DatabaseReference newPost = mDatabase.push();
-
-            mDatabaseUser.addValueEventListener(new ValueEventListener() {
+            mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    newPost.child("timestamp").setValue(timeStamp);
-                    newPost.child("desc").setValue(desc_val);
-                    newPost.child("uid").setValue(mCurrentUser.getUid());
-                    newPost.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-
-                            }
-                        }
-                    });
-                    newPost.child("userimage").setValue(dataSnapshot.child("image").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-
-                            }
-                        }
-                    });
+                    mDatabase.child(mPostKey).child("desc").setValue(desc_val);
                 }
 
                 @Override
@@ -106,8 +90,7 @@ public class PostActivity extends AppCompatActivity {
 
             mProgress.dismiss();
 
-            startActivity(new Intent(PostActivity.this, MainActivity.class));
-            finish();
+            onBackPressed();
         }
     }
 

@@ -2,12 +2,15 @@ package com.example.divakrishna.wind;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +47,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         actionBar = getSupportActionBar();
         actionBar.hide();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -89,16 +97,13 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
-                        String user_id = mAuth.getCurrentUser().getUid();
-
-                        DatabaseReference current_user_db = mDatabase.child(user_id);
-
-                        current_user_db.child("name").setValue(name);
-                        current_user_db.child("image").setValue("default");
 
                         mProgress.dismiss();
 
                         Intent setupIntent = new Intent(RegisterActivity.this, SetupActivity.class);
+
+                        setupIntent.putExtra("current_username", name);
+
                         setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(setupIntent);
                     }

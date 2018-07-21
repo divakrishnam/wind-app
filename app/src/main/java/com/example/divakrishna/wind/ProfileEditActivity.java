@@ -1,5 +1,6 @@
 package com.example.divakrishna.wind;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,9 +15,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -24,7 +30,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-public class SetupActivity extends AppCompatActivity {
+public class ProfileEditActivity extends AppCompatActivity {
 
     private ImageButton mSetupImageButton;
     private EditText mNameField;
@@ -37,6 +43,10 @@ public class SetupActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private DatabaseReference mDatabaseUsers;
+
+    private DatabaseReference mDatabaseCurrentUser;
+
+    private Query mQuery;
 
     private StorageReference mStorageImage;
 
@@ -54,7 +64,7 @@ public class SetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Setting Profile");
+        actionBar.setTitle("Edit Profile");
         getSupportActionBar().setElevation(0);
 
         mAuth = FirebaseAuth.getInstance();
@@ -63,6 +73,7 @@ public class SetupActivity extends AppCompatActivity {
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
+
         mProgress = new ProgressDialog(this);
 
         mSetupImageButton = findViewById(R.id.setupImageButton);
@@ -70,6 +81,11 @@ public class SetupActivity extends AppCompatActivity {
         mSubmitButton = findViewById(R.id.setupSubmitButton);
 
         mCurrentUsername = getIntent().getExtras().getString("current_username");
+        mCurrentUserimage = getIntent().getExtras().getString("current_userimage");
+        mCurrentUserid = getIntent().getExtras().getString("current_userid");
+
+        mDatabaseCurrentUser = FirebaseDatabase.getInstance().getReference().child("Post");
+        mQuery = mDatabaseCurrentUser.orderByChild("uid").equalTo(mCurrentUserid);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -77,7 +93,7 @@ public class SetupActivity extends AppCompatActivity {
         int width = displayMetrics.widthPixels;
 
         mNameField.setText(mCurrentUsername);
-        Picasso.get().load(R.drawable.profile).transform(new RoundTransformation(width/2*4,1)).into(mSetupImageButton);
+        Picasso.get().load(mCurrentUserimage).transform(new RoundTransformation(width / 2 * 4, 1)).into(mSetupImageButton);
 
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -105,18 +121,34 @@ public class SetupActivity extends AppCompatActivity {
 
         final String user_id = mAuth.getCurrentUser().getUid();
 
-        if(!TextUtils.isEmpty(name)){
+        if (!TextUtils.isEmpty(name)) {
 
             mProgress.setMessage("Finishing Setup ...");
             mProgress.show();
 
 
-            if(mAct){
+            if (mAct) {
                 StorageReference filepath = mStorageImage.child(mImageUri.getLastPathSegment());
                 filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        String downloadUri = taskSnapshot.getDownloadUrl().toString();
+                        final String downloadUri = taskSnapshot.getDownloadUrl().toString();
+
+                        mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        snapshot.getRef().child("username").setValue(name);
+                                        snapshot.getRef().child("userimage").setValue(downloadUri);
+                                    }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
 
                         mDatabaseUsers.child(user_id).child("name").setValue(name);
 
@@ -124,22 +156,30 @@ public class SetupActivity extends AppCompatActivity {
 
                         mProgress.dismiss();
 
-                        Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent);
+                        onBackPressed();
                     }
                 });
-            }else{
+            } else {
 
-                        mDatabaseUsers.child(user_id).child("name").setValue(name);
+                mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            snapshot.getRef().child("username").setValue(name);
+                        }
+                    }
 
-                        mDatabaseUsers.child(user_id).child("image").setValue("http://scenkonstvasternorrland.se/app/themes/verksamhet/assets/images/profile.png");
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        mProgress.dismiss();
+                    }
+                });
 
-                        Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mainIntent);
+                mDatabaseUsers.child(user_id).child("name").setValue(name);
+
+                mProgress.dismiss();
+
+                onBackPressed();
 
             }
         }
@@ -147,10 +187,10 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             mAct = true;
 
             Uri imageUri = data.getData();
@@ -170,7 +210,7 @@ public class SetupActivity extends AppCompatActivity {
                 getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
                 int height = displayMetrics.heightPixels;
                 int width = displayMetrics.widthPixels;
-                Picasso.get().load(mImageUri).transform(new RoundTransformation(width/2*4,1)).into(mSetupImageButton);
+                Picasso.get().load(mImageUri).transform(new RoundTransformation(width / 2 * 4, 1)).into(mSetupImageButton);
                 mAct = true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();

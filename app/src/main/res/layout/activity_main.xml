@@ -4,17 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="7dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginTop="2dp"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.RecyclerView android:id="@+id/post_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        card_view:cardPreventCornerOverlap="false"
-        card_view:cardUseCompatPadding="true">
+        android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
 
